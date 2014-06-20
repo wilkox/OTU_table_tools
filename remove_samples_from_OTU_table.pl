@@ -7,19 +7,20 @@ use experimental 'smartmatch';
 $|++;
 
 my $USAGE = qq/CORRECT USAGE:
-perl remove_samples_from_OTU_table.pl <sample_list.txt> <OTUTable.txt> > <filtered_OTU_table.txt>
+... | perl remove_samples_from_OTU_table.pl OTU_list.txt | ...
 /;
-die $USAGE unless @ARGV;
+die $USAGE unless @ARGV == 1;
 
-(my $sampleList, my $OTUTable) = @ARGV;
+(my $sampleList) = @ARGV;
 
 #Read in list of samples to remove
 my %sampleList = map {$_ => 1} read_file($sampleList, chomp => 1);
 
 #Remove from OTU table
-open IN, '<', $OTUTable;
 my $index;
-while (<IN>) {
+my $removed = 0;
+say STDERR "Removing samples listed in ", $sampleList, "...";
+while (<STDIN>) {
 
   chomp;
   my @row = split(/\t/, $_);
@@ -32,7 +33,10 @@ while (<IN>) {
     next;
   }
 
-  next if exists $sampleList{$row[$index]};
+  if (exists $sampleList{$row[$index]}) {
+    ++$removed;
+    next;
+  };
   say;
 }
-close IN;
+say STDERR $removed, " rows removed from OTU table";
