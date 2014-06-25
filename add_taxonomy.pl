@@ -17,7 +17,7 @@ open TAXA, '<', $repSetAssignments or die $USAGE;
 say STDERR "Reading taxonomic assignments from $repSetAssignments";
 while (<TAXA>) {
 
-  #print STDERR "\r$. OTUs read" unless $. % 1000;
+  print STDERR "\r$. OTUs read" unless $. % 1000;
   (my $OTU, my $lineage) = split(/\t/, $_);
 
   $lineage =~ s/.__//g;
@@ -25,7 +25,7 @@ while (<TAXA>) {
   $taxonomy{$OTU} = $lineage;
 
 }
-#say STDERR "\r$. OTUs read";
+say STDERR "\r$. OTUs read";
 close TAXA;
 
 #Add taxonomy to OTU table
